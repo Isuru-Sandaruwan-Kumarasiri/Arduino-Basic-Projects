@@ -1,0 +1,158 @@
+int trigPin = 2;      
+int echoPin = 4;     
+
+const int enl = 10;
+const int revleft4 = 8;   // Forward motion of Left motor
+const int fwdleft5 = 9;   // Reverse motion of Left motor
+
+const int enr = 5;
+const int revright6 = 6;  // Forward motion of Right motor
+const int fwdright7 = 7;  // Reverse motion of Right motor
+
+const int bluetoothStatePin = 12;
+
+long duration, distance;
+
+int maxSpeed = 130;
+int turn = 1;
+
+char command;
+
+void setup() {
+  pinMode(bluetoothStatePin, INPUT);
+
+  delay(random(500, 2000));  // delay for random time
+
+  Serial.begin(9600);
+
+  pinMode(revleft4, OUTPUT);  // set Motor pins as output
+  pinMode(fwdleft5, OUTPUT);
+  pinMode(revright6, OUTPUT);
+  pinMode(fwdright7, OUTPUT);
+
+  pinMode(trigPin, OUTPUT);  // set trig pin as output
+  pinMode(echoPin, INPUT);   // set echo pin as input to capture reflected waves
+}
+
+void loop() {
+  if (Serial.available() > 0) { 
+    command = Serial.read(); 
+    Serial.println(command);
+    stop();  // Stop the robot before processing any new command
+
+    switch (command) {
+      case '1':  // Move forward
+        forward();
+        break;
+
+      case '2':  // Move backward
+        backward();
+        break;
+
+      case '3':  // (Optional) Move left - no implementation yet
+         left();
+        break;
+
+      case '4':  // Turn right
+        right();
+        break;
+
+      case '5':  // Use ultrasonic sensor to avoid obstacles
+        stop();
+        break;
+
+      case '6':
+        ultrasonicObstacleAvoidance();
+        break;
+      default:  // If no valid command, stop the robot
+        stop();
+        break;
+    }
+  }
+}
+
+void ultrasonicObstacleAvoidance() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);  // send waves for 10 us
+  delayMicroseconds(10);
+
+  duration = pulseIn(echoPin, HIGH);  // receive reflected waves
+  distance = duration / 58.2;         // convert to distance in cm
+  Serial.println(distance);
+
+  delay(10);
+
+  // Robot behavior based on distance from obstacle
+  if (distance >= 20) {
+    forward();  // move forward if obstacle is far
+  } else if (distance < 20) {
+    stop();     // stop the robot
+    backward(); // move backward
+    stop();
+    left();
+  }
+}
+
+void stop() {
+  digitalWrite(fwdright7, LOW);  // Stop right motor
+  digitalWrite(revright6, LOW);
+
+  digitalWrite(fwdleft5, LOW);   // Stop left motor
+  digitalWrite(revleft4, LOW);
+
+  analogWrite(enr, 0);  // Stop speed control for right motor
+  analogWrite(enl, 0);  // Stop speed control for left motor
+
+  delay(500);  // Short delay for stabilization
+}
+
+void forward() {
+  digitalWrite(fwdright7, LOW);   // move forward: right motor
+  digitalWrite(revright6, HIGH);
+
+  digitalWrite(fwdleft5, LOW);    // move forward: left motor
+  digitalWrite(revleft4, HIGH);
+
+  analogWrite(enr, maxSpeed);     // set speed for right motor
+  analogWrite(enl, maxSpeed - 10); // set slightly reduced speed for left motor to adjust alignment
+}
+
+void backward() {
+  digitalWrite(fwdright7, HIGH);  // move backward: right motor
+  digitalWrite(revright6, LOW);
+
+  digitalWrite(fwdleft5, HIGH);   // move backward: left motor
+  digitalWrite(revleft4, LOW);
+
+  analogWrite(enr, maxSpeed);     // set speed for backward motion
+  analogWrite(enl, maxSpeed);
+  delay(500);
+}
+
+void right() {
+  digitalWrite(fwdright7, LOW);   // right motor forward
+  digitalWrite(revright6, HIGH);
+
+  digitalWrite(fwdleft5, LOW);    // stop left motor for right turn
+  digitalWrite(revleft4, LOW);
+
+  analogWrite(enr, maxSpeed);     // set speed for right motor
+  analogWrite(enl, 0);            // stop left motor for turning
+  delay(1200);  // delay for turning time, adjust as necessary
+  stop();
+}
+
+void left() {
+  digitalWrite(fwdright7, LOW);   // right motor forward
+  digitalWrite(revright6, LOW);
+
+  digitalWrite(fwdleft5, LOW);    // stop left motor for right turn
+  digitalWrite(revleft4, HIGH);
+
+  analogWrite(enr, maxSpeed);     // set speed for right motor
+  analogWrite(enl, 0);            // stop left motor for turning
+  delay(1200);  // delay for turning time, adjust as necessary
+  stop();
+}

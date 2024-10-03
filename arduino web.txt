@@ -1,0 +1,22 @@
+				**SMART VACUUME CLEANER**
+
+*Project Overview*
+	The smart vacuum cleaner project aims to develop an autonomous cleaning device using the Arduino Uno platform. Designed to simplify household chores, this project integrates various sensors and components to enable efficient and intelligent cleaning.
+
+Purpose
+The primary goal of this project is to create a vacuum cleaner that can navigate autonomously, avoid obstacles, and clean floors without manual intervention. It addresses the need for a convenient, time-saving solution for maintaining clean living spaces.
+
+Features
+Autonomous Navigation: Equipped with an ultrasonic sensor, the vacuum cleaner can detect obstacles in its path and change direction to avoid collisions.
+Programmable Control: The Arduino Uno board allows for customizable behavior, such as setting cleaning patterns or adjusting speed.
+Efficient Power Management: Powered by two rechargeable batteries, the cleaner can operate wirelessly, offering flexibility and convenience.
+Motor Control: A motor module drives the cleaner's movement, ensuring smooth and efficient operation on various floor types.
+Benefits
+Time-Saving: Automates the cleaning process, allowing users to focus on other tasks.
+Effortless Operation: Requires minimal user interaction, making it ideal for daily cleaning.
+Cost-Effective: Uses affordable components, providing an economical alternative to commercial smart vacuums.
+Customizable: The open-source nature of Arduino enables users to modify and expand the cleaner’s functionalities as needed.
+Overall, this project demonstrates the potential of DIY robotics in creating practical and intelligent household devices.	
+
+
+*Key Features*
